@@ -1,0 +1,17 @@
+{
+  "name": "cloudwatch2scalyr",
+  "description": "Stream AWS CloudWatch logs to Scalyr.",
+  "version": "0.1.1",
+  "dependencies": {
+    "request": "*"
+  },
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">= 4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalyr/cloudwatch2scalyr.git"
+  },
+  "readme": "README.md"
+}

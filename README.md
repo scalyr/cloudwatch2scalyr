@@ -1,2 +1,3 @@
-# cloudwatch2scalyr
-Code and instructions for streaming AWS CloudWatch logs to Scalyr in near-real-time.
+# Upload CloudWatch Logs to Scalyr
+
+[Instructions are here](StreamingLogsfromCloudWatchtoScalyr.pdf) in PDF format.
