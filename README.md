@@ -9,6 +9,7 @@ If you haven’t set up a "cloudwatch2scalyr" lambda function yet, both of these
 
 **NOTE:** At some point (later in the instructions) you'll be asked to upload a ZIP file to Amazon. You can find the latest pre-built copy [here](https://github.com/scalyr/cloudwatch2scalyr/blob/master/dist/cloudwatch2scalyr.zip), or you can build your own locally using the make_distribution.sh shell script.
 <br>
+<br>
 
 ## Start the Lambda Function creation wizard
 
@@ -20,6 +21,7 @@ Once you navigate to that page, you should see something like this:
 <br>
 
 Click "Create a Lambda function" - this will start the wizard.
+<br>
 <br>
 
 ## Pick runtime and function blueprint
@@ -73,14 +75,16 @@ The last step on this page is to define a role for your function. In the next se
 <div style="text-align:center"><img src="markdown_images/image_7.png" width="900"></div>
 <br>
 
-## Finish up and try it out
+## Last step
 
 Now, click "Next". On the next page, click “Create Function”. You should see a screen like:
 
 <div style="text-align:center"><img src="markdown_images/image_8.png" width="900"></div>
-<br>
 
 At this point, you’re done!
+<br>
+
+## Try it out
 
 Try it out by triggering some kind of action that will generate CloudWatch logs. This should cause events to be streamed to Scalyr (it may take a few seconds for them to show up):
 
