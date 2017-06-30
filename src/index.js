@@ -38,6 +38,8 @@ function transformToAddEventsMessage(cloudWatchMessage) {
         'sev': 3,
         'attrs': {
           // TODO make changes here if you want to parse in AWS Lambda before sending to Scalyr
+          'cwStream': cloudWatchMessage.logStream,
+          'cwId': cloudWatchEvent.id,
           'message': cloudWatchEvent.message
         }
       };
@@ -58,6 +60,7 @@ function transformToUploadLogsMessage(cloudWatchMessage) {
     'token': encodeURIComponent(decryptedScalyrApiKey),
     'host': encodeURIComponent(`cloudwatch-${cloudWatchMessage.owner}`), // TODO change this if you like
     'logfile': encodeURIComponent(cloudWatchMessage.logGroup),
+    'logStream': encodeURIComponent(cloudWatchMessage.logStream),
     'body': cloudWatchMessage.logEvents.map((cloudWatchEvent) => {
       if (cloudWatchEvent.message.endsWith('\n')) {
         return cloudWatchEvent.message.substr(0, cloudWatchEvent.message.length - 1);
@@ -86,7 +89,7 @@ function transformToPost(cloudWatchMessage) {
     const message = transformToUploadLogsMessage(cloudWatchMessage);
     return {
       headers: {'content-type': 'text/plain'},
-      url: `${uploadLogsUrl}?token=${message.token}&host=${message.host}&logfile=${message.logfile}&parser=${parserName}`,
+      url: `${uploadLogsUrl}?token=${message.token}&host=${message.host}&logfile=${message.logfile}&server-logStream=${message.logStream}&parser=${parserName}`,
       body: message.body
     };
   }
