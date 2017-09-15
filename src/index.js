@@ -8,8 +8,11 @@ const request = require('request');
 const addEventsUrl = 'https://www.scalyr.com/addEvents';
 const uploadLogsUrl = 'https://www.scalyr.com/api/uploadLogs';
 
-let parserName = process.env['PARSER_NAME'];
-if (!parserName || !parserName.length) parserName = 'cloudWatchLogs';
+let logGroupOptions = {};
+if (process.env['LOG_GROUP_OPTIONS']) logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
+let defaultParserName = process.env['PARSER_NAME'];
+if (!defaultParserName || !defaultParserName.length) defaultParserName = 'cloudWatchLogs';
+let defaultServerHost = process.env['SERVER_HOST'];
 
 const useAddEventsApi = (process.env['USE_ADD_EVENTS_API'] == 'true');
 const encryptedScalyrApiKey = process.env['SCALYR_WRITE_LOGS_KEY'];
@@ -23,14 +26,16 @@ let decryptedScalyrApiKey;
  * @returns {Object}          Outgoing Scalyr message.
  */
 function transformToAddEventsMessage(cloudWatchMessage) {
+  let sessionOpts = logGroupOptions[cloudWatchMessage.logGroup] || {}
+  let defaultSession = {
+    'serverHost': defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`,
+    'logfile': cloudWatchMessage.logGroup,
+    'parser': defaultParserName
+  }
   return {
     'token': decryptedScalyrApiKey,
     'session': cloudWatchMessage.logStream,
-    'sessionInfo': {
-      'serverHost': `cloudwatch-${cloudWatchMessage.owner}`, // TODO change this if you like
-      'logfile': cloudWatchMessage.logGroup,
-      'parser': parserName
-    },
+    'sessionInfo': Object.assign(defaultSession, sessionOpts),
     'events': cloudWatchMessage.logEvents.map((cloudWatchEvent) => {
       return {
         'ts': `${cloudWatchEvent.timestamp}000000`,
@@ -89,7 +94,7 @@ function transformToPost(cloudWatchMessage) {
     const message = transformToUploadLogsMessage(cloudWatchMessage);
     return {
       headers: {'content-type': 'text/plain'},
-      url: `${uploadLogsUrl}?token=${message.token}&host=${message.host}&logfile=${message.logfile}&server-logStream=${message.logStream}&parser=${parserName}`,
+      url: `${uploadLogsUrl}?token=${message.token}&host=${message.host}&logfile=${message.logfile}&server-logStream=${message.logStream}&parser=${defaultParserName}`,
       body: message.body
     };
   }
