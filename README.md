@@ -93,47 +93,35 @@ Try it out by triggering some kind of action that will generate CloudWatch logs.
 <br>
 <br>
 
-As you’ll notice, the log messages that show up in Scalyr are identical to those you would see in CloudWatch. Also note the serverHost field ("cloudwatch-536….") and logfile field (“/aws/lambda/airQuality”). You can set up a custom parser in Scalyr based on the log file name (it should match your PARSER_NAME environment variable).
+As you’ll notice, the log messages that show up in Scalyr are identical to those you would see in CloudWatch. Also note the serverHost field ("cloudwatch-536….") and logfile field (“/aws/lambda/airQuality”). You can set up a custom parser in Scalyr based on the log file name (it should match your PARSER_NAME environment variable). You can also customize the serverHost field via the `SERVER_HOST` environment variable.
 <br>
 <br>
 
 ## A bit about the addEvents transformation code (experimental)
 
-This is an **experimental** feature that allows you to do some parsing in AWS Lambda itself by modifying the code in cloudwatch2scalyr. 
+This is an **experimental** feature that allows you to do some parsing in AWS Lambda itself by modifying the code in cloudwatch2scalyr.
+You can also customize the `serverHost`, `logfile`, and `parser` on a per-log-group basis by setting an environment variable, `LOG_GROUP_OPTIONS`.
 
 The cloudwatch2scalyr.zip file contains one main file (index.js) as well as supporting Node.js libraries. If you wish to pre-parse interesting fields from the logs, you’ll probably be most interested in the *transformToAddEventsMessage* function, which is responsible for translating from CloudWatch-speak to Scalyr-speak. **Note: at this time, we don’t recommend using the addEvents API from Amazon Lambda (use uploadLogs, the default, instead).**
 
-For more information about the format Scalyr expects, see this link: [https://www.scalyr.com/help/api#addEvents](https://www.scalyr.com/help/api#addEvents)
-
-Here’s the function in question:
+To use `LOG_GROUP_OPTIONS`, set the variable to a JSON string with log group names as keys, e.g.:
 
 ```javascript
-/**
- * Translates a CloudWatch message into a format appropriate for submitting to the Scalyr addEvents API endpoint.
- *
- * @param cloudWatchMessage   Incoming CloudWatch message.
- * @returns {Object}          Outgoing Scalyr message.
- */
-function transformToAddEventsMessage(cloudWatchMessage) {
-  return {
-    'token': decryptedScalyrApiKey,
-    'session': cloudWatchMessage.logStream,
-    'sessionInfo': {
-      'serverHost': `cloudwatch-${cloudWatchMessage.owner}`, // TODO change this if you like
-      'logfile': cloudWatchMessage.logGroup,
-      'parser': parserName
-    },
-    'events': cloudWatchMessage.logEvents.map((cloudWatchEvent) => {
-      return {
-        'ts': `${cloudWatchEvent.timestamp}000000`,
-        'type': 0,
-        'sev': 3,
-        'attrs': {
-          // TODO make changes here if you want to parse in AWS Lambda before sending to Scalyr
-          'message': cloudWatchEvent.message
-        }
-      };
-    })
-  };
+{
+  "API-Gateway-Execution-Logs_abcdef12345/production": {
+    "serverHost": "API-Gateway",
+    "logfile": "My-Friendly-Api-Name",
+    "parser": "myGatewayParser"
+  },
+  "API-Gateway-Execution-Logs_12345abcdef/production": {
+    "serverHost": "API-Gateway",
+    "logfile": "My-Other-Api"
+  }
 }
 ```
+
+Defaults are used for any omitted fields.
+
+For more information about the format Scalyr expects, see this link: [https://www.scalyr.com/help/api#addEvents](https://www.scalyr.com/help/api#addEvents)
+
+The function can be found [here](src/index.js#L28).
