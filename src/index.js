@@ -26,12 +26,12 @@ let decryptedScalyrApiKey;
  * @returns {Object}          Outgoing Scalyr message.
  */
 function transformToAddEventsMessage(cloudWatchMessage) {
-  let sessionOpts = logGroupOptions[cloudWatchMessage.logGroup] || {}
+  let sessionOpts = logGroupOptions[cloudWatchMessage.logGroup] || {};
   let defaultSession = {
     'serverHost': defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`,
     'logfile': cloudWatchMessage.logGroup,
     'parser': defaultParserName
-  }
+  };
   return {
     'token': decryptedScalyrApiKey,
     'session': cloudWatchMessage.logStream,
