@@ -63,7 +63,10 @@ Once you’ve done this, you should see something like:
 <div style="text-align:center"><img src="markdown_images/image_5.png" width="900"></div>
 <br>
 
-There are a couple of additional environment variables you can pass to the code - USE_ADD_EVENTS_API and PARSER_NAME. (These should not be encrypted.) In general, USE_ADD_EVENTS_API should be false (and you don’t actually need to specify it unless you want it to be true). PARSER_NAME is optional as well and refers to a specific custom parser defined using the Scalyr UI - if not specified, the default parser is used.
+There are a couple of additional environment variables you can pass to the code - `USE_ADD_EVENTS_API`, `PARSER_NAME`, and `SCALYR_BASE_URL`. (These should not be encrypted.)
+* In general, `USE_ADD_EVENTS_API` should be false (and you don’t actually need to specify it unless you want it to be true).
+* `PARSER_NAME` is optional as well and refers to a specific custom parser defined using the Scalyr UI - if not specified, the default parser is used.
+* `SCALYR_BASE_URL` defaults to `https://www.scylr.com` and selects the Scalyr region to which you want to upload your logs, such as  `https://upload.eu.scalyr.com`.  *Note:* If this parameter is configured incorrectly, you will not get error messages from Scalyr during log upload; AWS logs of this Lambda function will look as if everything is working, but the logs won't show in Scalyr.
 
 <div style="text-align:center"><img src="markdown_images/image_6.png" width="600"></div>
 <br>
@@ -75,7 +78,7 @@ The last step on this page is to define a role for your function. In the next se
 <div style="text-align:center"><img src="markdown_images/image_7.png" width="900"></div>
 <br>
 
-## Last step
+## Finalize the installation
 
 Now, click "Next". On the next page, click “Create Function”. You should see a screen like:
 
