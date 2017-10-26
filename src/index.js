@@ -75,8 +75,8 @@ function transformToAddEventsMessage(cloudWatchMessage) {
  * @returns {Object}          Outgoing Scalyr message.
  */
 function transformToUploadLogsMessage(cloudWatchMessage) {
-  let serverHost = (defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`);
-  let logfile = (userLogFile || cloudWatchMessage.logGroup);
+  const serverHost = (defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`);
+  const logfile = (userLogFile || cloudWatchMessage.logGroup);
   return {
     'token': encodeURIComponent(decryptedScalyrApiKey),
     'host': encodeURIComponent(serverHost),
