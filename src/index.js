@@ -5,8 +5,9 @@ const http = require('http');
 const zlib = require('zlib');
 const request = require('request');
 
-const addEventsUrl = 'https://www.scalyr.com/addEvents';
-const uploadLogsUrl = 'https://www.scalyr.com/api/uploadLogs';
+const baseUrl = process.env['SCALYR_BASE_URL'] || 'https://www.scalyr.com';
+const addEventsUrl = baseUrl + '/addEvents';
+const uploadLogsUrl = baseUrl + '/api/uploadLogs';
 
 let logGroupOptions = {};
 if (process.env['LOG_GROUP_OPTIONS']) logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
