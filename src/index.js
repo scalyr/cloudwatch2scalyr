@@ -10,10 +10,21 @@ const addEventsUrl = baseUrl + '/addEvents';
 const uploadLogsUrl = baseUrl + '/api/uploadLogs';
 
 let logGroupOptions = {};
-if (process.env['LOG_GROUP_OPTIONS']) logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
-let defaultParserName = process.env['PARSER_NAME'];
+let userLogFile;
+let userParserName;
+let userServerHost;
+if (process.env['LOG_GROUP_OPTIONS']) {
+    logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
+    let functionLogGroupName = process.env['AWS_LAMBDA_LOG_GROUP_NAME'];
+    userLogFile = logGroupOptions[functionLogGroupName]['logfile'];
+    userServerHost = logGroupOptions[functionLogGroupName]['serverHost'];
+    userParserName = logGroupOptions[functionLogGroupName]['parser'];
+}
+
+let defaultParserName = (userParserName || process.env['PARSER_NAME']);
 if (!defaultParserName || !defaultParserName.length) defaultParserName = 'cloudWatchLogs';
-let defaultServerHost = process.env['SERVER_HOST'];
+
+let defaultServerHost = (userServerHost || process.env['SERVER_HOST']);
 
 const useAddEventsApi = (process.env['USE_ADD_EVENTS_API'] == 'true');
 const encryptedScalyrApiKey = process.env['SCALYR_WRITE_LOGS_KEY'];
@@ -62,10 +73,12 @@ function transformToAddEventsMessage(cloudWatchMessage) {
  * @returns {Object}          Outgoing Scalyr message.
  */
 function transformToUploadLogsMessage(cloudWatchMessage) {
+  let serverHost = (defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`);
+  let logfile = (userLogFile || cloudWatchMessage.logGroup);
   return {
     'token': encodeURIComponent(decryptedScalyrApiKey),
-    'host': encodeURIComponent(`cloudwatch-${cloudWatchMessage.owner}`), // TODO change this if you like
-    'logfile': encodeURIComponent(cloudWatchMessage.logGroup),
+    'host': encodeURIComponent(serverHost),
+    'logfile': encodeURIComponent(logfile),
     'logStream': encodeURIComponent(cloudWatchMessage.logStream),
     'body': cloudWatchMessage.logEvents.map((cloudWatchEvent) => {
       if (cloudWatchEvent.message.endsWith('\n')) {
