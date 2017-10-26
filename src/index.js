@@ -10,12 +10,12 @@ const addEventsUrl = baseUrl + '/addEvents';
 const uploadLogsUrl = baseUrl + '/api/uploadLogs';
 
 let logGroupOptions = {};
-let userLogFile;
-let userParserName;
-let userServerHost;
+let userLogFile = null;
+let userParserName = null;
+let userServerHost = null;
 if (process.env['LOG_GROUP_OPTIONS']) {
     logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
-    let functionLogGroupName = process.env['AWS_LAMBDA_LOG_GROUP_NAME'];
+    let functionLogGroupName = process.env['AWS_LAMBDA_LOG_GROUP_NAME'].substr(1);
     if (logGroupOptions[functionLogGroupName]) {
         userLogFile = logGroupOptions[functionLogGroupName]['logfile'];
         userServerHost = logGroupOptions[functionLogGroupName]['serverHost'];
@@ -23,10 +23,10 @@ if (process.env['LOG_GROUP_OPTIONS']) {
     }
 }
 
-let defaultParserName = (userParserName || process.env['PARSER_NAME']);
+let defaultParserName = (process.env['PARSER_NAME'] || userParserName);
 if (!defaultParserName || !defaultParserName.length) defaultParserName = 'cloudWatchLogs';
 
-let defaultServerHost = (userServerHost || process.env['SERVER_HOST']);
+let defaultServerHost = (process.env['SERVER_HOST'] || userServerHost);
 
 const useAddEventsApi = (process.env['USE_ADD_EVENTS_API'] == 'true');
 const encryptedScalyrApiKey = process.env['SCALYR_WRITE_LOGS_KEY'];
@@ -75,8 +75,8 @@ function transformToAddEventsMessage(cloudWatchMessage) {
  * @returns {Object}          Outgoing Scalyr message.
  */
 function transformToUploadLogsMessage(cloudWatchMessage) {
-  let serverHost = (defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`);
-  let logfile = (userLogFile || cloudWatchMessage.logGroup);
+  const serverHost = (defaultServerHost || `cloudwatch-${cloudWatchMessage.owner}`);
+  const logfile = (userLogFile || cloudWatchMessage.logGroup);
   return {
     'token': encodeURIComponent(decryptedScalyrApiKey),
     'host': encodeURIComponent(serverHost),
