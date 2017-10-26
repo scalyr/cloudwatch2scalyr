@@ -23,10 +23,10 @@ if (process.env['LOG_GROUP_OPTIONS']) {
     }
 }
 
-let defaultParserName = (userParserName || process.env['PARSER_NAME']);
+let defaultParserName = (process.env['PARSER_NAME'] || userParserName);
 if (!defaultParserName || !defaultParserName.length) defaultParserName = 'cloudWatchLogs';
 
-let defaultServerHost = (userServerHost || process.env['SERVER_HOST']);
+let defaultServerHost = (process.env['SERVER_HOST'] || userServerHost);
 
 const useAddEventsApi = (process.env['USE_ADD_EVENTS_API'] == 'true');
 const encryptedScalyrApiKey = process.env['SCALYR_WRITE_LOGS_KEY'];
