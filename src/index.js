@@ -10,12 +10,12 @@ const addEventsUrl = baseUrl + '/addEvents';
 const uploadLogsUrl = baseUrl + '/api/uploadLogs';
 
 let logGroupOptions = {};
-let userLogFile;
-let userParserName;
-let userServerHost;
+let userLogFile = null;
+let userParserName = null;
+let userServerHost = null;
 if (process.env['LOG_GROUP_OPTIONS']) {
     logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
-    let functionLogGroupName = process.env['AWS_LAMBDA_LOG_GROUP_NAME'];
+    let functionLogGroupName = process.env['AWS_LAMBDA_LOG_GROUP_NAME'].substr(1);
     if (logGroupOptions[functionLogGroupName]) {
         userLogFile = logGroupOptions[functionLogGroupName]['logfile'];
         userServerHost = logGroupOptions[functionLogGroupName]['serverHost'];
