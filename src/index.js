@@ -16,9 +16,11 @@ let userServerHost;
 if (process.env['LOG_GROUP_OPTIONS']) {
     logGroupOptions = JSON.parse(process.env['LOG_GROUP_OPTIONS']);
     let functionLogGroupName = process.env['AWS_LAMBDA_LOG_GROUP_NAME'];
-    userLogFile = logGroupOptions[functionLogGroupName]['logfile'];
-    userServerHost = logGroupOptions[functionLogGroupName]['serverHost'];
-    userParserName = logGroupOptions[functionLogGroupName]['parser'];
+    if (logGroupOptions[functionLogGroupName]) {
+        userLogFile = logGroupOptions[functionLogGroupName]['logfile'];
+        userServerHost = logGroupOptions[functionLogGroupName]['serverHost'];
+        userParserName = logGroupOptions[functionLogGroupName]['parser'];
+    }
 }
 
 let defaultParserName = (userParserName || process.env['PARSER_NAME']);

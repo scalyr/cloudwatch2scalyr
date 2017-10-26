@@ -111,12 +111,12 @@ To use `LOG_GROUP_OPTIONS`, set the variable to a JSON string with log group nam
 
 ```javascript
 {
-  "API-Gateway-Execution-Logs_abcdef12345/production": {
+  "/API-Gateway-Execution-Logs_abcdef12345/production": {
     "serverHost": "API-Gateway",
     "logfile": "My-Friendly-Api-Name",
     "parser": "myGatewayParser"
   },
-  "API-Gateway-Execution-Logs_12345abcdef/production": {
+  "/API-Gateway-Execution-Logs_12345abcdef/production": {
     "serverHost": "API-Gateway",
     "logfile": "My-Other-Api"
   }
