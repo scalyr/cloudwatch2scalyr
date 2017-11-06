@@ -1,4 +1,4 @@
-# Streaming Logs from CloudWatch to Scalyr
+#  Streaming Logs from CloudWatch to Scalyr
 
 In order to send logs to Scalyr in near-real-time, there are two steps involved:
 
@@ -27,7 +27,7 @@ First, specify the function name. In this example we're using "cloudwatch2scalyr
 
 Define a role for your function. Below the function name that you specified, choose "Create new role from template(s)" from the Role dropdown, give the role a name, and choose “KMS decryption permissions” from the Policy Templates dropdown:
 
-<div style="text-align:center"><img src="markdown_images/image_1.png" width="300"></div>
+<div style="text-align:center"><img src="markdown_images/image_1.png" width="900"></div>
 <br>
 
 When you are done, click on "Create function."
