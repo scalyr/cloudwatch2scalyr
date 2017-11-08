@@ -27,7 +27,7 @@ First, specify the function name. In this example we're using "cloudwatch2scalyr
 
 Define a role for your function. Below the function name that you specified, choose "Create new role from template(s)" from the Role dropdown, give the role a name, and choose “KMS decryption permissions” from the Policy Templates dropdown:
 
-<div style="text-align:center"><img src="markdown_images/image_1.png" width="900"></div>
+<div style="text-align:center"><img src="markdown_images/image_1.png" width="800"></div>
 <br>
 
 When you are done, click on "Create function."
@@ -36,7 +36,7 @@ When you are done, click on "Create function."
 
 On the next page, you'll need to specify all configuration for your function, including uploading the function code, which is in cloudwatch2scalyr.zip.
 
-First, you'll need to upload your function. Select "Upload a .ZIP file" from the Code entry type dropdown, and upload cloud2scalyr.zip. Then select "Node.js 4.3" from the Runtime dropdown.
+First, you'll need to upload your function. Select "Upload a .ZIP file" from the Code entry type dropdown, and upload cloudwatch2scalyr.zip. Then select "Node.js 4.3" from the Runtime dropdown.
 
 <div style="text-align:center"><img src="markdown_images/image_2.png" width="900"></div>
 <br>
@@ -56,14 +56,14 @@ Once you’ve done this, you should see something like:
 There are additional environment variables you can pass to the code - `USE_ADD_EVENTS_API`, `PARSER_NAME`, and `SCALYR_BASE_URL`. (These should not be encrypted.)
 * In general, `USE_ADD_EVENTS_API` should be false (and you don’t actually need to specify it unless you want it to be true).
 * `PARSER_NAME` is optional as well and refers to a specific custom parser defined using the Scalyr UI - if not specified, the default parser is used.
-* `SCALYR_BASE_URL` defaults to `https://www.scalyr.com` and selects the Scalyr region to which you want to upload your logs, such as  `https://upload.eu.scalyr.com`.  *Note:* If this parameter is configured incorrectly, you will not get error messages from Scalyr during log upload; AWS logs of this Lambda function will look as if everything is working, but the logs won't be displayed in Scalyr.
+* `SCALYR_BASE_URL` defaults to `https://www.scalyr.com` and selects the Scalyr region to which you want to upload your logs. Currently, the only valid values are `https://www.scalyr.com` and `https://upload.eu.scalyr.com`.  *Note:* If this parameter is configured incorrectly, you will not get error messages from Scalyr during log upload; AWS logs of this Lambda function will look as if everything is working, but the logs won't be displayed in Scalyr.
 
 <div style="text-align:center"><img src="markdown_images/image_4.png" width="600"></div>
 <br>
 
 ## Save and test the function
 
-After you've entered all necessary information, you can save and test the function. Click on the "Save and test" button in the upper right-hand corner. On thte screen that appears, ensure that "Create new test event" is selected, then select "CloudWatch Logs" from the Event template dropdown. Give the event a name, then click "Create" at the bottom of the page.
+After you've entered all necessary information, you can save and test the function. Click on the "Save and test" button in the upper right-hand corner. On the screen that appears, ensure that "Create new test event" is selected, then select "CloudWatch Logs" from the Event template dropdown. Give the event a name, then click "Create" at the bottom of the page.
 
 Next, click on "Test" in the upper-right corner of the page. If the results state "Execution result: succeeded," go to the Log View in Scalyr and look for "cloudwatch-123456789123" and click on "testLogGroup" next to it.
 
@@ -78,7 +78,7 @@ Note: If you want to change the values of the parser, log group name, or server 
 
 On the next page, you’ll configure a trigger to invoke the function. Click on the rounded dashed-line rectangle to do this and then select "CloudWatch Logs" from the dropdown that appears:
 
-<div style="text-align:center"><img src="markdown_images/image_6.png" width="600"></div>
+<div style="text-align:center"><img src="markdown_images/image_6.png" width="200"></div>
 <br>
 
 At this point, you’ll need to select a Log Group and provide a Filter Name (which can be anything, but it is required). Also, check the "Enable trigger" checkbox:
