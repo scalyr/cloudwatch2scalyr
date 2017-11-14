@@ -58,7 +58,7 @@ There are additional environment variables you can pass to the code - `USE_ADD_E
 * `PARSER_NAME` is optional as well and refers to a specific custom parser defined using the Scalyr UI - if not specified, the default parser is used.
 * `SCALYR_BASE_URL` defaults to `https://www.scalyr.com` and selects the Scalyr region to which you want to upload your logs. Currently, the only valid values are `https://www.scalyr.com` and `https://upload.eu.scalyr.com`.  *Note:* If this parameter is configured incorrectly, you will not get error messages from Scalyr during log upload; AWS logs of this Lambda function will look as if everything is working, but the logs won't be displayed in Scalyr.
 
-<div style="text-align:center"><img src="markdown_images/image_4.png" width="600"></div>
+<div style="text-align:center"><img src="markdown_images/image_4.png" width="800"></div>
 <br>
 
 ## Save and test the function
@@ -69,7 +69,7 @@ Next, click on "Test" in the upper-right corner of the page. If the results stat
 
 You should then see CloudWatch logs like these:
 
-<div style="text-align:center"><img src="markdown_images/image_5.png" width="600"></div>
+<div style="text-align:center"><img src="markdown_images/image_5.png" width="900"></div>
 <br>
 
 Note: If you want to change the values of the parser, log group name, or server name see the information about LOG_GROUP_OPTIONS below.
@@ -83,7 +83,7 @@ On the next page, you’ll configure a trigger to invoke the function. Click on 
 
 At this point, you’ll need to select a Log Group and provide a Filter Name (which can be anything, but it is required). Also, check the "Enable trigger" checkbox:
 
-<div style="text-align:center"><img src="markdown_images/image_7.png" width="700"></div>
+<div style="text-align:center"><img src="markdown_images/image_7.png" width="800"></div>
 <br>
 
 ## A bit about the addEvents transformation code (experimental)
