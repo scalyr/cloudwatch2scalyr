@@ -65,9 +65,9 @@ There are additional environment variables you can pass to the code - `USE_ADD_E
 
 After you've entered all necessary information, you can save and test the function. Click on the "Save and test" button in the upper right-hand corner. On the screen that appears, ensure that "Create new test event" is selected, then select "CloudWatch Logs" from the Event template dropdown. Give the event a name, then click "Create" at the bottom of the page.
 
-Next, click on "Test" in the upper-right corner of the page. If the results state "Execution result: succeeded," go to the Log View in Scalyr and look for "cloudwatch-123456789123" and click on "testLogGroup" next to it.
+Next, click on "Test" in the upper-right corner of the page. If the results state "Execution result: succeeded," go to the Log View in Scalyr and look for "cloudwatch-<aws_account_id>" and click on the function name next to it.
 
-You should then see two test error messages like these:
+You should then see CloudWatch logs like these:
 
 <div style="text-align:center"><img src="markdown_images/image_5.png" width="600"></div>
 <br>
