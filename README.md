@@ -30,11 +30,11 @@ In this guide you'll create an AWS Lambda function using the open source
 1. From the [AWS Lambda Console](https://console.aws.amazon.com/lambda/home)
    click the *Create Function* button.
 
-    <img src="../markdown_images/image1.png"/>
+    <img src="markdown_images/image1.png"/>
 
 2. Make sure the *Author from scratch* option is selected.
 
-    <img src="../markdown_images/image2.png"/>
+    <img src="markdown_images/image2.png"/>
 
     Name the function whatever you want, here we're calling ours
     `sendCloudWatchLogsToScalyr`. For the runtime select `Node.js 4.3`.   
@@ -46,17 +46,17 @@ In this guide you'll create an AWS Lambda function using the open source
 
     When done, your info should resemble the following:
 
-    <img src="../markdown_images/image3.png"/>
+    <img src="markdown_images/image3.png"/>
 
     Click the Create Function button Which will bring you to the
     function configuration screen.
 
-    <img src="../markdown_images/image4.png"/>
+    <img src="markdown_images/image4.png"/>
 
 3. On the left in the Designer column, scroll down and select *CloudWatch Logs*
    from the list of triggers.
 
-   <img src="../markdown_images/image5.png"/>
+   <img src="markdown_images/image5.png"/>
 
    Scroll down to configure the trigger.
 
@@ -70,11 +70,11 @@ In this guide you'll create an AWS Lambda function using the open source
    Ensure the *Enable Trigger* checkbox is selected and then click the Add
    button to add the trigger to this Lambda function.
 
-   <img src="../markdown_images/image6.png"/>
+   <img src="markdown_images/image6.png"/>
 
    Save the function by clicking the Save button.
 
-   <img src="../markdown_images/image7.png"/>
+   <img src="markdown_images/image7.png"/>
 
 4. The next step is to upload the `cloudwatch2scalyr` zip file.
 
@@ -84,7 +84,7 @@ In this guide you'll create an AWS Lambda function using the open source
    Scroll down to see the code editor and select *Upload a Zip file* from the
    code entry drop down.
 
-   <img src="../markdown_images/image8.png"/>
+   <img src="markdown_images/image8.png"/>
 
    Click the Upload button and select the `cloudwatch2scalyr.zip` file that you
    downloaded earlier. Make sure the Runtime is set to `Node.js 4.3` and the
@@ -102,7 +102,7 @@ In this guide you'll create an AWS Lambda function using the open source
    Encrypt the `SCALYR_WRITE_LOGS_KEY` environment variable by clicking the
    Encrypt button.
 
-   <img src="../markdown_images/image9.png"/>
+   <img src="markdown_images/image9.png"/>
 
    The following optional environment variables can also be configured to define
    which parser Scalyr should use as well as the Scalyr region to upload logs
@@ -124,15 +124,15 @@ In this guide you'll create an AWS Lambda function using the open source
    created a service role named `myScalyrCloudWatchRole` that has privileges to
    access CloudWatch.
 
-   <img src="../markdown_images/image10.png"/>
+   <img src="markdown_images/image10.png"/>
 
    After saving the function your trigger will be live. As new logs are written
    to the CloudWatch log group that you've setup, you’ll see the logs in the
    Scalyr Logs View.
 
-   <img src="../markdown_images/image11.png"/>
+   <img src="markdown_images/image11.png"/>
 
-   <img src="../markdown_images/image12.png"/>
+   <img src="markdown_images/image12.png"/>
 
 ## Troubleshooting
 
