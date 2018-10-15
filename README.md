@@ -1,130 +1,141 @@
-# Streaming Logs from CloudWatch to Scalyr
+# Sending CloudWatch Logs to Scalyr
 
-In order to send logs to Scalyr in near-real-time, there are two steps involved:
+Amazon CloudWatch is a monitoring and logging service for the AWS ecosystem that
+provides complete visibility into your cloud resources and applications.
 
-1. Create an AWS Lambda Function that receives CloudWatch log events, transforms them to a Scalyr-compatible message, and posts that to a Scalyr API.
-2. Set up your CloudWatch Log Group(s) with a subscription filter that will stream CloudWatch log data to that lambda function.
+But why dig into another logging system?
 
-If you haven’t set up a "cloudwatch2scalyr" lambda function yet, both of these steps will be taken care of in the Lambda Function creation wizard as described below.
+If you’re currently sending logs to CloudWatch all you need to do is to create
+an AWS Lambda function with CloudWatch as a trigger and you can send CloudWatch
+logs to Scalyr.
 
-**NOTE:** At some point (later in the instructions) you'll be asked to upload a ZIP file to Amazon. You can find the latest pre-built copy [here](https://github.com/scalyr/cloudwatch2scalyr/blob/master/dist/cloudwatch2scalyr.zip), or you can build your own locally using the make_distribution.sh shell script.
-<br>
-<br>
+## What You’ll Do
 
-## Start the Lambda Function creation wizard
+In this guide you'll create an AWS Lambda function using the open source
+`cloudwatch2scalyr` project to sendCloudWatch logs to Scalyr.
 
-First, go to the Lambda Management Console in AWS. For us-east-1, the link is [https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions?display=list](https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions?display=list) – if you’re in a different region, you can substitute that region for "us-east-1" in the URL above.
+## What You Need
 
-Once you navigate to that page, you should see something like this:
+1. An application, service, or resource that is currently sending logs to
+   CloudWatch.
+2. A CloudWatch log group to serve as the event source for the trigger.
+3. An AWS KMS key for encrypting of the Scalyr API key.
+4. The `cloudwatch2scalyr` distribution zip file from the Scalyr GitHub
+   repository. Download the latest zip file from [here](https://github.com/scalyr/cloudwatch2scalyr/blob/master/dist/cloudwatch2scalyr.zip).
+   You’ll upload this to the Lambda function later on.
+5. A Scalyr Write Logs API key.
 
-<div style="text-align:center"><img src="markdown_images/image_0.png" width="500"></div>
-<br>
+## Steps
 
-Click "Create a Lambda function" - this will start the wizard.
-<br>
-<br>
+1. From the [AWS Lambda Console](https://console.aws.amazon.com/lambda/home)
+   click the *Create Function* button.
 
-## Pick runtime and function blueprint
+    <img src="../markdown_images/image1.png"/>
 
-On the next page, you’ll need to pick a "runtime" and a function “blueprint”. Choose “Node.js 4.3” for the runtime and click on “Blank Function” for the blueprint, as shown below:
+2. Make sure the *Author from scratch* option is selected.
 
-<div style="text-align:center"><img src="markdown_images/image_1.png" width="300"></div>
-<br>
+    <img src="../markdown_images/image2.png"/>
 
-## Configure trigger
+    Name the function whatever you want, here we're calling ours
+    `sendCloudWatchLogsToScalyr`. For the runtime select `Node.js 4.3`.   
 
-On the next page, you’ll configure a trigger to invoke the function. Click on the rounded dashed-line rectangle to do this and then select "CloudWatch Logs" from the dropdown that appears:
+    For the Role, select *Create a new role from one or more templates*.
+    Give the role a name, for this example, we’re using
+    `myScalyrCloudWatchRole`. From the *Policy templates* dropdown select
+    *AWS KMS decryption permissions*.
 
-<div style="text-align:center"><img src="markdown_images/image_2.png" width="600"></div>
-<br>
+    When done, your info should resemble the following:
 
-At this point, you’ll need to select a Log Group and provide a Filter Name (which can be anything, but it is required). Also, check the "Enable trigger" checkbox:
+    <img src="../markdown_images/image3.png"/>
 
-<div style="text-align:center"><img src="markdown_images/image_3.png" width="700"></div>
-<br>
+    Click the Create Function button Which will bring you to the
+    function configuration screen.
 
-## Supply function name and upload code
+    <img src="../markdown_images/image4.png"/>
 
-On the next screen, you’ll need to supply a function name and an optional description, as well as upload the lambda function code (which is in cloudwatch2scalyr.zip):
+3. On the left in the Designer column, scroll down and select *CloudWatch Logs*
+   from the list of triggers.
 
-<div style="text-align:center"><img src="markdown_images/image_4.png" width="800"></div>
-<br>
+   <img src="../markdown_images/image5.png"/>
 
-## Supply environment variables
+   Scroll down to configure the trigger.
 
-You’ll need to specify your Scalyr "Write Logs" API key as an environment variable on this screen (scroll down a bit). In order to do this, you’ll need to create a KMS encryption key if you don’t have one in your account already (beyond the scope of this document). Select your encryption key and enter an environment variable:
+   You'll need to have an existing log group that will serve as your event
+   source. If you don’t have one created already, refer to
+   [Working with Log Groups and Log Streams](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html).
 
-* Enter "SCALYR_WRITE_LOGS_KEY" in the first column (no quotes)
-* Provide your account’s actual Scalyr "Write Logs" API Key in the second column.
-* Click "Encrypt".
+   For the filter name we're using `scalyrCloudWatchDemo`, but you can name it
+   anything you want.
 
-Once you’ve done this, you should see something like:
+   Ensure the *Enable Trigger* checkbox is selected and then click the Add
+   button to add the trigger to this Lambda function.
 
-<div style="text-align:center"><img src="markdown_images/image_5.png" width="900"></div>
-<br>
+   <img src="../markdown_images/image6.png"/>
 
-There are a couple of additional environment variables you can pass to the code - `USE_ADD_EVENTS_API`, `PARSER_NAME`, and `SCALYR_BASE_URL`. (These should not be encrypted.)
-* In general, `USE_ADD_EVENTS_API` should be false (and you don’t actually need to specify it unless you want it to be true).
-* `PARSER_NAME` is optional as well and refers to a specific custom parser defined using the Scalyr UI - if not specified, the default parser is used.
-* `SCALYR_BASE_URL` defaults to `https://www.scalyr.com` and selects the Scalyr region to which you want to upload your logs, such as  `https://upload.eu.scalyr.com`.  *Note:* If this parameter is configured incorrectly, you will not get error messages from Scalyr during log upload; AWS logs of this Lambda function will look as if everything is working, but the logs won't show in Scalyr.
+   Save the function by clicking the Save button.
 
-<div style="text-align:center"><img src="markdown_images/image_6.png" width="600"></div>
-<br>
+   <img src="../markdown_images/image7.png"/>
 
-## Define a role for your function
+4. The next step is to upload the `cloudwatch2scalyr` zip file.
 
-The last step on this page is to define a role for your function. In the next section of the page, choose "Create new role from template(s)" from the Role dropdown, give the role a name, and choose “KMS decryption permissions” from the Policy Templates dropdown:
+   Click the function name (`sendCloudWatchLogsToScalyr` in our case) to view
+   the configuration details.
 
-<div style="text-align:center"><img src="markdown_images/image_7.png" width="900"></div>
-<br>
+   Scroll down to see the code editor and select *Upload a Zip file* from the
+   code entry drop down.
 
-## Finalize the installation
+   <img src="../markdown_images/image8.png"/>
 
-Now, click "Next". On the next page, click “Create Function”. You should see a screen like:
+   Click the Upload button and select the `cloudwatch2scalyr.zip` file that you
+   downloaded earlier. Make sure the Runtime is set to `Node.js 4.3` and the
+   Handler is set to `index.handler`.
 
-<div style="text-align:center"><img src="markdown_images/image_8.png" width="900"></div>
+5. Scroll further down to add your Scalyr API key as an environment variable.
+   This API key will need to have the Write Logs access permission. You'll need
+   to use `SCALYR_WRITE_LOGS_KEY` for the environment variable key.
 
-At this point, you’re done!
-<br>
-<br>
+   You'll also want to encrypt the API key, so expand the *Encryption
+   configuration* section and check the box labeled
+   *Enable helpers for encryption in transit*. In the following field select
+   your existing AWS KMS key.
 
-## Try it out
+   Encrypt the `SCALYR_WRITE_LOGS_KEY` environment variable by clicking the
+   Encrypt button.
 
-Try it out by triggering some kind of action that will generate CloudWatch logs. This should cause events to be streamed to Scalyr (it may take a few seconds for them to show up):
+   <img src="../markdown_images/image9.png"/>
 
-<div style="text-align:center"><img src="markdown_images/image_9.png" width="900"></div>
-<br>
-<br>
+   The following optional environment variables can also be configured to define
+   which parser Scalyr should use as well as the Scalyr region to upload logs
+   to.
 
-As you’ll notice, the log messages that show up in Scalyr are identical to those you would see in CloudWatch. Also note the serverHost field ("cloudwatch-536….") and logfile field (“/aws/lambda/airQuality”). You can set up a custom parser in Scalyr based on the log file name (it should match your PARSER_NAME environment variable). You can also customize the serverHost field via the `SERVER_HOST` environment variable.
-<br>
-<br>
+   The parser can be configured through the `PARSER_NAME` environment variable
+   and should match the parser defined in the Scalyr UI. If not specified,
+   Scalyr will use the default parser.
 
-## A bit about the addEvents transformation code (experimental)
+   The Scalyr region to upload the logs to can be configured by setting the
+   `SCALYR_BASE_URL`. If this is not set it defaults to https://www.scalyr.com.
 
-This is an **experimental** feature that allows you to do some parsing in AWS Lambda itself by modifying the code in cloudwatch2scalyr.
-You can also customize the `serverHost`, `logfile`, and `parser` on a per-log-group basis by setting an environment variable, `LOG_GROUP_OPTIONS`.
+   Make sure this parameter is set correctly. If it isn't, you won't see any
+   error messages from Scalyr during the log upload and the AWS logs of the
+   Lambda function will look as if everything is working, but the logs won't
+   show up in Scalyr.
 
-The cloudwatch2scalyr.zip file contains one main file (index.js) as well as supporting Node.js libraries. If you wish to pre-parse interesting fields from the logs, you’ll probably be most interested in the *transformToAddEventsMessage* function, which is responsible for translating from CloudWatch-speak to Scalyr-speak. **Note: at this time, we don’t recommend using the addEvents API from Amazon Lambda (use uploadLogs, the default, instead).**
+6. The last thing we need to do is define our *Execution role*. We’ve previously
+   created a service role named `myScalyrCloudWatchRole` that has privileges to
+   access CloudWatch.
 
-To use `LOG_GROUP_OPTIONS`, set the variable to a JSON string with log group names as keys, e.g.:
+   <img src="../markdown_images/image10.png"/>
 
-```javascript
-{
-  "API-Gateway-Execution-Logs_abcdef12345/production": {
-    "serverHost": "API-Gateway",
-    "logfile": "My-Friendly-Api-Name",
-    "parser": "myGatewayParser"
-  },
-  "API-Gateway-Execution-Logs_12345abcdef/production": {
-    "serverHost": "API-Gateway",
-    "logfile": "My-Other-Api"
-  }
-}
-```
+   After saving the function your trigger will be live. As new logs are written
+   to the CloudWatch log group that you've setup, you’ll see the logs in the
+   Scalyr Logs View.
 
-Defaults are used for any omitted fields.
+   <img src="../markdown_images/image11.png"/>
 
-For more information about the format Scalyr expects, see this link: [https://www.scalyr.com/help/api#addEvents](https://www.scalyr.com/help/api#addEvents)
+   <img src="../markdown_images/image12.png"/>
 
-The function can be found [here](src/index.js#L28).
+## Troubleshooting
+
+* If you are not seeing the CloudWatch logs appear in Scalyr, check to make sure
+  you can see the logs in CloudWatch. It may take a few minutes for the logs to
+  appear in the Scalyr Logs View.
