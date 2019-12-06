@@ -1,3 +1,7 @@
+# ATTENTION: This solution has been deprecated
+
+Please see our current Scalyr-CloudWatch integration here: https://github.com/scalyr/scalyr-aws-serverless/tree/master/cloudwatch_logs
+
 # Sending CloudWatch Logs to Scalyr
 
 Amazon CloudWatch is a monitoring and logging service for the AWS ecosystem that
