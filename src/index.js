@@ -126,7 +126,7 @@ function transformToPost(cloudWatchMessage) {
  * @param callback
  */
 function processEvent(event, context, callback) {
-  const payload = new Buffer(event.awslogs.data, 'base64');
+  const payload = Buffer.from(event.awslogs.data, 'base64');
   zlib.gunzip(payload, (err, res) => {
     if (err) return callback(err);
 
